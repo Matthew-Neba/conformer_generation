@@ -1,0 +1,9 @@
+{
+  "E0": 525.8371311671298,
+  "Z0": 16.154879274306534,
+  "dataset": "torsionnet_lignin",
+  "molfile": "8_0.mol",
+  "source_path": "torsionnet_paper_version/TorsionNet/lignin_eval_final_sgld/8_0.json",
+  "split": "test",
+  "tau": 3.969829297340214
+}

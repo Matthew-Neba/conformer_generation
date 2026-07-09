@@ -1,0 +1,10 @@
+{
+  "E0": 28.164734254140935,
+  "Z0": 2.6492409019553156,
+  "dataset": "torsionnet_alkane",
+  "rbn": 10,
+  "smiles": "[H]C([H])([H])C([H])([H])C([H])([H])C([H])([H])C([H])([H])C([H])(C([H])(C([H])([H])[H])C([H])([H])C([H])([H])[H])C([H])(C([H])([H])C([H])([H])[H])C([H])(C([H])([H])[H])C([H])([H])C([H])([H])[H]",
+  "source_path": "torsionnet_paper_version/TorsionNet/huge_hc_set.zip:huge_hc_set/10_2010.json",
+  "split": "all",
+  "tau": 1.0
+}

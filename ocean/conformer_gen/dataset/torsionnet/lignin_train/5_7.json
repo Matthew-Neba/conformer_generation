@@ -1,0 +1,9 @@
+{
+  "E0": 396.9587044344092,
+  "Z0": 3.168434698979377,
+  "dataset": "torsionnet_lignin",
+  "molfile": "5_7.mol",
+  "source_path": "torsionnet_paper_version/TorsionNet/lignin_hightemp/5_7.json",
+  "split": "train",
+  "tau": 4.0
+}

@@ -1,0 +1,9 @@
+{
+  "E0": 7.668625034772399,
+  "Z0": 13.263723987526067,
+  "dataset": "torsionnet_alkane",
+  "smiles": "CC(CCC)CCCC(CCCC)CC",
+  "source_path": "torsionnet_paper_version/TorsionNet/alkane_validation_10/differentcarbon.json",
+  "split": "validation",
+  "tau": 1.0
+}

@@ -1,0 +1,9 @@
+{
+  "E0": 14.88278294332602,
+  "Z0": 1.2363186365185044,
+  "dataset": "torsionnet_alkane",
+  "smiles": "[H]C([H])([H])C([H])([H])C([H])([H])C([H])([H])C([H])([H])C([H])([H])[C@]([H])(C([H])([H])C([H])([H])[H])C([H])([H])C([H])([H])[C@@]([H])(C([H])([H])C([H])([H])C([H])([H])C([H])([H])C([H])([H])C([H])([H])[H])C([H])([H])C([H])([H])[C@]([H])(C([H])([H])[H])C([H])([H])C([H])([H])C([H])([H])C([H])([H])C([H])([H])C([H])([H])[H]",
+  "source_path": "torsionnet_paper_version/TorsionNet/alkane_test_22/trihexyl.json",
+  "split": "test",
+  "tau": 1.0
+}

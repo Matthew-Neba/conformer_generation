@@ -1,0 +1,34 @@
+{
+  "alkane_all": {
+    "json": 10000,
+    "mol": 0
+  },
+  "alkane_test_11": {
+    "json": 1,
+    "mol": 0
+  },
+  "alkane_test_22": {
+    "json": 1,
+    "mol": 0
+  },
+  "alkane_train": {
+    "json": 4332,
+    "mol": 0
+  },
+  "alkane_validation_10": {
+    "json": 1,
+    "mol": 0
+  },
+  "lignin_test_sgmd_8": {
+    "json": 1,
+    "mol": 1
+  },
+  "lignin_train": {
+    "json": 12,
+    "mol": 12
+  },
+  "lignin_validation_8": {
+    "json": 1,
+    "mol": 1
+  }
+}
