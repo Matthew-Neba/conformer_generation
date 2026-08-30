@@ -385,6 +385,9 @@ def sweep(env_name, args=None, pareto=False):
         timestep_total = all_timesteps[gpu_id] if pareto else None
         if idx > 1: # First experiment uses defaults
             sweep_obj.suggest(args, fixed_total_timesteps=timestep_total)
+            if torch.cuda.is_available():
+                torch.cuda.synchronize()
+                torch.cuda.empty_cache()
 
         try:
             validate_config(args)
