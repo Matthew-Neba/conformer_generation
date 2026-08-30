@@ -326,6 +326,7 @@ def train(env_name, args=None, gpus=None, **kwargs):
         gpus = gpus[-1:] + gpus[:-1]  # Main process gets rank 0
 
     ctx = mp.get_context('spawn')
+    processes = []
     for rank, gpu_id in reversed(list(enumerate(gpus))):
         worker_args = deepcopy(args)
         worker_args['rank'] = rank
@@ -333,8 +334,23 @@ def train(env_name, args=None, gpus=None, **kwargs):
         if rank == 0 and not subprocess:
             _train(env_name, worker_args, verbose=True)
         else:
-            ctx.Process(target=_train, args=(env_name, worker_args),
-                kwargs=kwargs).start()
+            process_kwargs = kwargs
+            if rank != 0 and kwargs.get('result_queue') is not None:
+                process_kwargs = {**kwargs, 'result_queue': None}
+            process = ctx.Process(target=_train, args=(env_name, worker_args),
+                kwargs=process_kwargs)
+            process.start()
+            processes.append(process)
+
+    return processes
+
+def _release_sweep_cuda_cache(sweep_obj):
+    device = getattr(sweep_obj, 'device', None)
+    if device is None or torch.device(device).type != 'cuda':
+        return
+    with torch.cuda.device(device):
+        torch.cuda.synchronize()
+        torch.cuda.empty_cache()
 
 def sweep(env_name, args=None, pareto=False):
     '''Train entry point. Handles single-GPU, multi-GPU DDP, and sweeps.'''
@@ -365,7 +381,13 @@ def sweep(env_name, args=None, pareto=False):
     while completed < num_experiments:
         if len(active) >= sweep_gpus//exp_gpus: # Collect completed runs
             gpu_id, scores, costs, timesteps = result_queue.get()
-            done_args = active.pop(gpu_id)
+            done_args, done_processes = active.pop(gpu_id)
+            for process in done_processes:
+                process.join()
+                if process.exitcode != 0:
+                    raise RuntimeError(
+                        f'Sweep worker {process.pid} exited with status {process.exitcode}'
+                    )
 
             if not scores:
                 sweep_obj.observe(done_args, 0, 0, is_failure=True)
@@ -385,9 +407,7 @@ def sweep(env_name, args=None, pareto=False):
         timestep_total = all_timesteps[gpu_id] if pareto else None
         if idx > 1: # First experiment uses defaults
             sweep_obj.suggest(args, fixed_total_timesteps=timestep_total)
-            if torch.cuda.is_available():
-                torch.cuda.synchronize()
-                torch.cuda.empty_cache()
+            _release_sweep_cuda_cache(sweep_obj)
 
         try:
             validate_config(args)
@@ -397,9 +417,11 @@ def sweep(env_name, args=None, pareto=False):
             continue
 
         exp_args = deepcopy(args)
-        active[gpu_id] = exp_args
-        train(env_name, exp_args, range(gpu_id, gpu_id + exp_gpus),
-            sweep_obj=sweep_obj, result_queue=result_queue)
+        worker_sweep_obj = (sweep_obj.worker_view()
+            if hasattr(sweep_obj, 'worker_view') else sweep_obj)
+        processes = train(env_name, exp_args, range(gpu_id, gpu_id + exp_gpus),
+            sweep_obj=worker_sweep_obj, result_queue=result_queue)
+        active[gpu_id] = (exp_args, processes)
 
 def eval(env_name, args=None, load_path=None):
     '''Evaluate a trained policy. Supports both native and --slowly torch backends.'''
